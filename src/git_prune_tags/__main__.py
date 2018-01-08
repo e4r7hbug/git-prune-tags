@@ -53,6 +53,9 @@ def set_verbosity(ctx, param, value):
 
 def prune_tags(starts_with=''):
     """Find tags to prune."""
+    if not starts_with and not click.confirm('No start string for searching provided will delete all tags, continue?'):
+        raise SystemExit()
+
     repo = Repo('.')
 
     prune_tags = [tag for tag in repo.tags if tag.name.startswith(starts_with)]
