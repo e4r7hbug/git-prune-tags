@@ -28,7 +28,7 @@ def delete_remote_tags(prune_tags=None, repo=None):
 
     for prune_tag in prune_tags:
         try:
-            remote.push(refspec=':{ref}'.format(ref=prune_tag), progress=progress)
+            remote.push(refspec=':{ref}'.format(ref=prune_tag.path), progress=progress)
         except git.exc.GitCommandError as error:
             LOG.debug('Git push error: %s', error)
 
