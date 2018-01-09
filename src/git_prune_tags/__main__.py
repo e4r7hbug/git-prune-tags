@@ -26,13 +26,23 @@ def delete_remote_tags(prune_tags=None, repo=None):
 
     remote = repo.remote()
 
-    try:
-        for prune_tag in prune_tags:
+    for prune_tag in prune_tags:
+        try:
             remote.push(refspec=':{ref}'.format(ref=prune_tag), progress=progress)
+        except git.exc.GitCommandError as error:
+            LOG.debug('Git push error: %s', error)
+
+            if 'does not exist' in error.stderr:
+                LOG.debug('Remote does not contain tag: %s', prune_tag)
+                continue
+            else:
+                click.secho('Verify you are allowed to delete tags through pushes.', bg='red', fg='white')
+                break
+        else:
             LOG.info('Removed remote tag: %s', prune_tag)
             removed_tags.append(prune_tag)
-    except git.exc.GitCommandError as error:
-        click.secho('Verify you are allowed to delete tags through pushes.', bg='red', fg='white')
+    else:
+        LOG.info('No tags to delete.')
 
     LOG.debug('Removed tags from remote: %s', removed_tags)
     return removed_tags
