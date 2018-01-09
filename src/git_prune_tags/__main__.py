@@ -46,7 +46,7 @@ def delete_local_and_remote_tags(prune_tags=None, repo=None):
             repo.delete_tag(prune_tag)
             LOG.info('Removed local tag: %s', prune_tag)
     else:
-        LOG.info('No tags to delete.')
+        LOG.info('Tags deleted.')
 
     LOG.debug('Removed tags from remote: %s', removed_tags)
     return removed_tags
