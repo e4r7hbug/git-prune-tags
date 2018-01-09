@@ -14,14 +14,8 @@ def progress(op_code, cur_count, max_count=None, message=''):
     LOG.debug('Progress: %s', locals())
 
 
-def delete_local_tags(prune_tags=None, repo=None):
-    """Remove matched Tags from local Repository."""
-    repo.delete_tag(prune_tags)
-    return prune_tags
-
-
-def delete_remote_tags(prune_tags=None, repo=None):
-    """Remove matched Tags from Remote Repository."""
+def delete_local_and_remote_tags(prune_tags=None, repo=None):
+    """Remove matched tags from local and remote repository."""
     removed_tags = []
 
     remote = repo.remote()
@@ -48,6 +42,9 @@ def delete_remote_tags(prune_tags=None, repo=None):
 
             LOG.info('Removed remote tag: %s', prune_tag)
             removed_tags.append(prune_tag)
+
+            repo.delete_tag(prune_tag)
+            LOG.info('Removed local tag: %s', prune_tag)
     else:
         LOG.info('No tags to delete.')
 
@@ -79,8 +76,7 @@ def prune_tags(starts_with=''):
     LOG.info('Number of tags to remove: %d', len(prune_tags))
     LOG.debug('Matching Tags: %s', prune_tags)
 
-    delete_remote_tags(prune_tags=prune_tags, repo=repo)
-    # delete_local_tags(prune_tags=prune_tags, repo=repo)
+    delete_local_and_remote_tags(prune_tags=prune_tags, repo=repo)
 
 
 @click.command()
