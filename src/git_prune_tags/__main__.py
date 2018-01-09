@@ -28,7 +28,7 @@ def delete_remote_tags(prune_tags=None, repo=None):
 
     for prune_tag in prune_tags:
         try:
-            remote.push(refspec=':{ref}'.format(ref=prune_tag.path), progress=progress)
+            push_results = remote.push(refspec=':{ref}'.format(ref=prune_tag.path), progress=progress)
         except git.exc.GitCommandError as error:
             LOG.debug('Git push error: %s', error)
 
@@ -39,6 +39,13 @@ def delete_remote_tags(prune_tags=None, repo=None):
                 click.secho('Verify you are allowed to delete tags through pushes.', bg='red', fg='white')
                 break
         else:
+            for push_result in push_results:
+                LOG.debug('Push flags: %d', push_result.flags)
+                LOG.debug('Push summary: %s', push_result.summary)
+
+                if push_result.flags != push_result.DELETED:
+                    raise SystemExit('Exit code {0:d}: {1}'.format(push_result.flag, push_result.summary))
+
             LOG.info('Removed remote tag: %s', prune_tag)
             removed_tags.append(prune_tag)
     else:
