@@ -59,6 +59,7 @@ def prune_tags(starts_with=''):
     repo = Repo('.')
 
     prune_tags = [tag for tag in repo.tags if tag.name.startswith(starts_with)]
+    LOG.info('Number of tags to remove: %d', len(prune_tags))
     LOG.debug('Matching Tags: %s', prune_tags)
 
     delete_remote_tags(prune_tags=prune_tags, repo=repo)
